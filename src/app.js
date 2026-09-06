@@ -1,10 +1,9 @@
 // src/app.js
 const express = require('express');
-const bodyParser = require('body-parser');
 const store = require('./store');
 
 const app = express();
-app.use(bodyParser.json());
+app.use(express.json({ limit: '100kb' }));
 
 app.get('/', (_req, res) => {
   res.json({ service: 'notes-app', health: 'ok' });
