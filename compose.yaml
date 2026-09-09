@@ -1,0 +1,51 @@
+name: notes-perf-lab
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: notes-perf-app:local
+    container_name: notes-perf-app
+
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+
+    ports:
+      - "127.0.0.1:3100:3000"
+
+    networks:
+      - perf-net
+
+    mem_limit: 512m
+    cpus: "0.75"
+    pids_limit: 100
+
+    read_only: true
+    tmpfs:
+      - /tmp:size=16m,mode=1777
+
+    cap_drop:
+      - ALL
+
+    security_opt:
+      - no-new-privileges:true
+
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "2"
+
+networks:
+  perf-net:
+    name: notes-perf-net
+    driver: bridge
