@@ -3,6 +3,8 @@ const express = require('express');
 const store = require('./store');
 
 const app = express();
+app.disable('x-powered-by');
+
 app.use(express.json({ limit: '100kb' }));
 
 app.get('/', (_req, res) => {
